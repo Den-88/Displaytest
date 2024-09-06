@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Display test</string>
+    <string name="app_nameInstr">Manual</string>
+    <string name="HomeText">For testing the display of your phone, press the START TEST button. To go to the next color, click on the screen.</string>
+    <string name="HomeText2">The following colors will be used for the test:</string>
+    <string name="HomeButton">Start test</string>
+    <string name="MenuInstr">Manual</string>
+    <string name="MenuDanate">Remove ads</string>
+    <string name="MenuWearTV">Version for WEAR OS and Android TV</string>
+    <string name="MenuAbout">About</string>
+    <string name="NotNow">This function will be implemented in future versions</string>
+    <string name="AboutText">Version 2.0.1 \nDeveloper: Shakurov Denis</string>
+    <string name="AboutButton">Close</string>
+    <string name="ManualText">The application is designed to check the devices screen for broken pixels.\n\nDo the following:\n\n1. Click the START TEST button.\n2. Carefully inspect the entire surface of the screen for the presence of different in color pixels after running the test.\n3. Click on the screen to change the color.\n4. Repeat the inspection.</string>
+    <string name="change_color_description">Change the background color</string>
+    <string name="title_activity_test" translatable="false">Test</string>
+</resources>

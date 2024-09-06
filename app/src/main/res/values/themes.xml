@@ -1,0 +1,4 @@
+<resources>
+    <style name="Base.Theme.DisplayTest" parent="Theme.Material3.DynamicColors.DayNight">
+    </style>
+</resources>

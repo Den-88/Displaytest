@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/instr"
+        android:title="@string/MenuInstr" />
+<!--    <item-->
+<!--        android:id="@+id/donate"-->
+<!--        android:title="@string/MenuDanate" />-->
+<!--    <item-->
+<!--        android:id="@+id/weartv"-->
+<!--        android:title="@string/MenuWearTV" />-->
+    <item
+        android:id="@+id/about"
+        android:title="@string/MenuAbout" />
+</menu>
