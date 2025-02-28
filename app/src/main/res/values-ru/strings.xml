@@ -10,7 +10,7 @@
     <string name="MenuWearTV">Версия для WEAR OS и Android TV</string>
     <string name="MenuAbout">О программе</string>
     <string name="NotNow">Данная функция будет реализована в будующих версиях</string>
-    <string name="AboutText">Версия 2.0.1 \nРазработчик: Шакуров Денис</string>
+    <string name="AboutText">Версия 2.1.0 \nРазработчик: Шакуров Денис</string>
     <string name="AboutButton">Закрыть</string>
     <string name="ManualText">Приложение предназначено для проверки экрана устройства на битые пиксели.\n\nВыполните следующие действия:\n\n1. Нажмите кнопку НАЧАТЬ ТЕСТ.\n2. После запуска теста внимательно осмотрите всю поверхность экрана на наличие отличающихся по цвету пикселей.\n3. Нажмите на экран для смены цвета.\n4. Повторите осмотр.</string>
     <string name="change_color_description">Изменить цвет фона</string>

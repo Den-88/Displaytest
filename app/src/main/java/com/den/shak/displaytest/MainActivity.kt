@@ -1,6 +1,7 @@
 package com.den.shak.displaytest
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -107,6 +108,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Обработчик для кнопки, запускающий TestActivity
+    @Suppress("UNUSED_PARAMETER")
     fun start(view: View?) {
         val intent = Intent(this@MainActivity, TestActivity::class.java)
         startActivity(intent)
@@ -116,7 +118,28 @@ class MainActivity : AppCompatActivity() {
     private fun loadBannerAd(adSize: BannerAdSize): BannerAdView {
         return binding.adContainerView.apply {
             setAdSize(adSize)
-            setAdUnitId(ConfigReader.getAdUnitId(this@MainActivity)) // Получаем ID рекламного блока
+            // Получаем ID рекламного блока
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val installSourceInfo = packageManager.getInstallSourceInfo(packageName)
+                val installerPackageName = installSourceInfo.installingPackageName
+
+                when (installerPackageName) {
+                    "com.android.vending" -> setAdUnitId(ConfigReader.getAdUnitId(this@MainActivity))
+                    "ru.vk.store" -> setAdUnitId(ConfigReader.getAdRuStoreUnitId(this@MainActivity))
+                    else -> setAdUnitId(ConfigReader.getAdUnitId(this@MainActivity))
+                }
+            } else {
+                // Используем устаревший метод для API ниже 30
+                @Suppress("DEPRECATION")
+                val installerPackageName = packageManager.getInstallerPackageName(packageName)
+
+                when (installerPackageName) {
+                    "com.android.vending" -> setAdUnitId(ConfigReader.getAdUnitId(this@MainActivity))
+                    "ru.vk.store" -> setAdUnitId(ConfigReader.getAdRuStoreUnitId(this@MainActivity))
+                    else -> setAdUnitId(ConfigReader.getAdUnitId(this@MainActivity))
+                }
+            }
+
             setBannerAdEventListener(object : BannerAdEventListener {
                 // Обработка успешной загрузки рекламы
                 override fun onAdLoaded() {
