@@ -3,4 +3,9 @@
     <style name="Base.Theme.DisplayTest" parent="Theme.Material3.DynamicColors.DayNight">
         <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>
+
+    <style name="Base.Theme.DisplayTest.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>

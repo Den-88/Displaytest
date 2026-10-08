@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.addCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,7 +20,7 @@ import com.yandex.mobile.ads.banner.BannerAdView
 import com.yandex.mobile.ads.common.AdRequest
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
-import com.yandex.mobile.ads.common.MobileAds
+import com.yandex.mobile.ads.common.YandexAds
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
@@ -29,9 +30,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        // Инициализация рекламного SDK Yandex
-        MobileAds.initialize(this) {}
+        // Инициализация рекламного SDK Yandex (v8)
+        YandexAds.initialize(this) {}
         // Инициализация binding для доступа к элементам разметки
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -39,10 +41,11 @@ class MainActivity : AppCompatActivity() {
         // Включение отображения значка "Домой" в ActionBar
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
-        // Установка отступов для главного View с учетом системных панелей
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        // Установка отступов для элементов с учетом системных панелей
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            binding.main.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            binding.adContainerView.setPadding(0, 0, 0, systemBars.bottom)
             insets
         }
 
@@ -50,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this) {
             val intent = Intent(Intent.ACTION_MAIN)
             intent.addCategory(Intent.CATEGORY_HOME)
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
         }
 
@@ -76,7 +79,7 @@ class MainActivity : AppCompatActivity() {
             }
             // Преобразуем ширину в dp для баннера
             val adWidth = (adWidthPixels / resources.displayMetrics.density).roundToInt()
-            return BannerAdSize.stickySize(this, adWidth)
+            return BannerAdSize.sticky(this, adWidth)
         }
 
     // Создание меню
@@ -116,30 +119,25 @@ class MainActivity : AppCompatActivity() {
 
     // Метод для загрузки баннерной рекламы с обработкой событий
     private fun loadBannerAd(adSize: BannerAdSize): BannerAdView {
-        return binding.adContainerView.apply {
-            setAdSize(adSize)
-            // Получаем ID рекламного блока
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val installSourceInfo = packageManager.getInstallSourceInfo(packageName)
-                val installerPackageName = installSourceInfo.installingPackageName
-
-                when (installerPackageName) {
-                    "com.android.vending" -> setAdUnitId(ConfigReader.getAdUnitId(this@MainActivity))
-                    "ru.vk.store" -> setAdUnitId(ConfigReader.getAdRuStoreUnitId(this@MainActivity))
-                    else -> setAdUnitId(ConfigReader.getAdUnitId(this@MainActivity))
-                }
-            } else {
-                // Используем устаревший метод для API ниже 30
-                @Suppress("DEPRECATION")
-                val installerPackageName = packageManager.getInstallerPackageName(packageName)
-
-                when (installerPackageName) {
-                    "com.android.vending" -> setAdUnitId(ConfigReader.getAdUnitId(this@MainActivity))
-                    "ru.vk.store" -> setAdUnitId(ConfigReader.getAdRuStoreUnitId(this@MainActivity))
-                    else -> setAdUnitId(ConfigReader.getAdUnitId(this@MainActivity))
-                }
+        val unitId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val installSourceInfo = packageManager.getInstallSourceInfo(packageName)
+            when (installSourceInfo.installingPackageName) {
+                "com.android.vending" -> ConfigReader.getAdUnitId(this@MainActivity)
+                "ru.vk.store" -> ConfigReader.getAdRuStoreUnitId(this@MainActivity)
+                else -> ConfigReader.getAdUnitId(this@MainActivity)
             }
+        } else {
+            @Suppress("DEPRECATION")
+            val installerPackageName = packageManager.getInstallerPackageName(packageName)
+            when (installerPackageName) {
+                "com.android.vending" -> ConfigReader.getAdUnitId(this@MainActivity)
+                "ru.vk.store" -> ConfigReader.getAdRuStoreUnitId(this@MainActivity)
+                else -> ConfigReader.getAdUnitId(this@MainActivity)
+            }
+        }
 
+        return binding.bannerView.apply {
+            setAdSize(adSize)
             setBannerAdEventListener(object : BannerAdEventListener {
                 // Обработка успешной загрузки рекламы
                 override fun onAdLoaded() {
@@ -155,17 +153,11 @@ class MainActivity : AppCompatActivity() {
                 // Обработка клика на рекламу
                 override fun onAdClicked() {}
 
-                // Событие при уходе пользователя из приложения
-                override fun onLeftApplication() {}
-
-                // Событие при возврате в приложение
-                override fun onReturnedToApplication() {}
-
                 // Событие при показе рекламы
                 override fun onImpression(impressionData: ImpressionData?) {}
             })
             // Загружаем рекламный запрос
-            loadAd(AdRequest.Builder().build())
+            loadAd(AdRequest.Builder(unitId.orEmpty()).build())
         }
     }
 }

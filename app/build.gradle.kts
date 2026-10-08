@@ -1,16 +1,15 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
 }
 
 android {
     namespace = "com.den.shak.displaytest"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.den.shak.displaytest"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 37
         versionCode = 28
         versionName = "2.1.0"
 
@@ -26,16 +25,21 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 
-    viewBinding {
-        enable = true
+    buildFeatures {
+        viewBinding = true
+        resValues = true
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 
