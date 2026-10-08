@@ -10,8 +10,8 @@ android {
         applicationId = "com.den.shak.displaytest"
         minSdk = 24
         targetSdk = 37
-        versionCode = 28
-        versionName = "2.1.0"
+        versionCode = 29
+        versionName = "2.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
